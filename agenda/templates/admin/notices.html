@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% block title %}Gerenciar avisos{% endblock %}
+{% block breadcrumb %}Administração / Avisos{% endblock %}
+{% block content %}
+<div class="page-heading heading-row"><div><span class="eyebrow eyebrow-green">ADMINISTRAÇÃO</span><h1>Gerenciar avisos</h1><p>Publique e mantenha os comunicados institucionais atualizados.</p></div><a class="button button-primary" href="{{ url_for('admin.new_notice') }}">＋ Novo aviso</a></div>
+<div class="content-card page-card">{% if notices %}<div class="table-wrap"><table class="data-table"><thead><tr><th>Comunicado</th><th>Data</th><th>Destaque</th><th>Ações</th></tr></thead><tbody>{% for notice in notices %}<tr><td><strong>{{ notice.title }}</strong><small class="cell-subtitle">{{ notice.content|truncate(95) }}</small></td><td>{{ notice.published_at.strftime('%d/%m/%Y') }}</td><td>{% if notice.is_pinned %}<span class="status-pill status-upcoming">Destacado</span>{% else %}—{% endif %}</td><td><div class="table-actions"><a class="action-link" href="{{ url_for('admin.edit_notice', notice_id=notice.id) }}">Editar</a><form method="post" action="{{ url_for('admin.delete_notice', notice_id=notice.id) }}" onsubmit="return confirm('Excluir este aviso?')"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="action-delete" type="submit">Excluir</button></form></div></td></tr>{% endfor %}</tbody></table></div>{% else %}<div class="empty-state"><strong>Nenhum aviso publicado</strong><p>Publique o primeiro comunicado institucional.</p></div>{% endif %}</div>
+{% endblock %}

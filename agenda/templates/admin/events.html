@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% block title %}Gerenciar eventos{% endblock %}
+{% block breadcrumb %}Administração / Eventos{% endblock %}
+{% block content %}
+<div class="page-heading heading-row"><div><span class="eyebrow eyebrow-green">ADMINISTRAÇÃO</span><h1>Gerenciar eventos</h1><p>Cadastre e atualize os eventos e datas importantes do campus.</p></div><a class="button button-primary" href="{{ url_for('admin.new_event') }}">＋ Novo evento</a></div>
+<div class="content-card page-card">{% if events %}<div class="table-wrap"><table class="data-table"><thead><tr><th>Evento</th><th>Data</th><th>Categoria</th><th>Local</th><th class="actions-heading">Ações</th></tr></thead><tbody>{% for event in events %}<tr><td><strong>{{ event.title }}</strong><small class="cell-subtitle">{{ event.description|truncate(72) }}</small></td><td>{{ event.event_date.strftime('%d/%m/%Y') }}</td><td><span class="soft-tag">{{ event.category }}</span></td><td>{{ event.location or '—' }}</td><td><div class="table-actions"><a class="action-link" href="{{ url_for('admin.edit_event', event_id=event.id) }}">Editar</a><form method="post" action="{{ url_for('admin.delete_event', event_id=event.id) }}" onsubmit="return confirm('Excluir este evento?')"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="action-delete" type="submit">Excluir</button></form></div></td></tr>{% endfor %}</tbody></table></div>{% else %}<div class="empty-state"><strong>Nenhum evento cadastrado</strong><p>Comece adicionando o primeiro evento.</p></div>{% endif %}</div>
+{% endblock %}

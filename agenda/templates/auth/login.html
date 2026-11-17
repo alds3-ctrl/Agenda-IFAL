@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}Entrar{% endblock %}
+{% block auth_content %}
+<div class="login-page">
+  <div class="login-decoration"><div class="login-orb orb-one"></div><div class="login-orb orb-two"></div><div class="login-brand"><img class="brand-logo brand-logo-login" src="{{ url_for('static', filename='img/agenda-ifal-logo.png') }}" alt="Logo Agenda IFAL"><div><strong>Agenda <em>IFAL</em></strong><small>Mais organização para sua rotina acadêmica.</small></div></div><div class="login-promo"><span class="eyebrow">SUA VIDA ACADÊMICA EM UM SÓ LUGAR</span><h1>Seus compromissos.<br><span>Em ordem.</span></h1><p>Consulte datas importantes, acompanhe atividades da sua turma e fique por dentro dos comunicados do campus.</p><div class="promo-points"><span>✓ Agenda do campus</span><span>✓ Cronogramas por turma</span><span>✓ Avisos institucionais</span></div></div><div class="login-footnote">Instituto Federal de Alagoas · Campus Viçosa</div></div>
+  <div class="login-panel"><div class="login-card"><div class="mobile-login-brand"><img class="brand-logo brand-logo-mobile" src="{{ url_for('static', filename='img/agenda-ifal-logo.png') }}" alt="Logo Agenda IFAL"><strong>Agenda <em>IFAL</em></strong></div><span class="eyebrow eyebrow-green">BEM-VINDO(A) DE VOLTA</span><h2>Acesse sua conta</h2><p class="muted">Entre para acompanhar sua rotina acadêmica.</p>
+    <form method="post" class="form-stack">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <label for="email">E-mail institucional ou cadastrado</label><input id="email" name="email" type="email" placeholder="seu.email@ifal.edu.br" autocomplete="username" required autofocus>
+      <label for="password">Senha</label><input id="password" name="password" type="password" placeholder="Digite sua senha" autocomplete="current-password" required>
+      <label class="check-line"><input type="checkbox" name="remember"> Manter conectado</label>
+      <button class="button button-primary button-full" type="submit">Entrar na plataforma <span>→</span></button>
+    </form>
+    <div class="login-note"><span class="lock-icon">⌑</span> Acesso destinado a estudantes e usuários autorizados.</div>
+  </div><div class="login-copyright">Agenda IFAL · Projeto acadêmico</div></div>
+</div>
+{% endblock %}

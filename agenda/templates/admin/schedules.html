@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% block title %}Gerenciar cronogramas{% endblock %}
+{% block breadcrumb %}Administração / Cronogramas{% endblock %}
+{% block content %}
+<div class="page-heading heading-row"><div><span class="eyebrow eyebrow-green">ADMINISTRAÇÃO</span><h1>Gerenciar cronogramas</h1><p>Organize provas, trabalhos e atividades por turma e bimestre.</p></div><a class="button button-primary" href="{{ url_for('admin.new_schedule') }}">＋ Nova atividade</a></div>
+<div class="content-card page-card">{% if items %}<div class="table-wrap"><table class="data-table"><thead><tr><th>Atividade</th><th>Turma</th><th>Disciplina</th><th>Bimestre</th><th>Entrega</th><th>Ações</th></tr></thead><tbody>{% for item in items %}<tr><td><strong>{{ item.title }}</strong><small class="cell-subtitle">{{ item.activity_type }}</small></td><td>{{ item.class_name }}</td><td>{{ item.subject }}</td><td>{{ item.term }}</td><td>{{ item.due_date.strftime('%d/%m/%Y') }}</td><td><div class="table-actions"><a class="action-link" href="{{ url_for('admin.edit_schedule', item_id=item.id) }}">Editar</a><form method="post" action="{{ url_for('admin.delete_schedule', item_id=item.id) }}" onsubmit="return confirm('Excluir esta atividade?')"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="action-delete" type="submit">Excluir</button></form></div></td></tr>{% endfor %}</tbody></table></div>{% else %}<div class="empty-state"><strong>Nenhuma atividade cadastrada</strong><p>Adicione as primeiras datas do cronograma.</p></div>{% endif %}</div>
+{% endblock %}
