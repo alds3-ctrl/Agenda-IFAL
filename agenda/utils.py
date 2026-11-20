@@ -1,4 +1,5 @@
 from datetime import date
+import re
 from functools import wraps
 
 from flask import abort, flash, redirect, url_for
@@ -29,3 +30,9 @@ def clean_text(value):
 
 def flash_form_error(message):
     flash(message, "error")
+
+
+STUDENT_EMAIL_DOMAIN = "@aluno.ifal.edu.br"
+
+def is_student_email(email):
+    return bool(re.fullmatch(r"[^@\s]+@aluno\.ifal\.edu\.br", email or "", flags=re.IGNORECASE))

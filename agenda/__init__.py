@@ -1,6 +1,7 @@
 from pathlib import Path
+from urllib.parse import urlparse
 
-from flask import Flask, flash, redirect, url_for
+from flask import Flask, flash, redirect, request, url_for
 from sqlalchemy import inspect, text
 
 from config import Config
@@ -10,7 +11,6 @@ from .extensions import csrf, db, login_manager
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_object(Config)
-    app.config.setdefault("MAX_CONTENT_LENGTH", 4 * 1024 * 1024)
     if test_config:
         app.config.update(test_config)
 
@@ -76,7 +76,10 @@ def create_app(test_config=None):
 
     @app.errorhandler(413)
     def uploaded_file_too_large(_error):
-        flash("O arquivo enviado é muito grande. Escolha uma imagem de até 3 MB.", "error")
-        return redirect(url_for("main.account"))
+        flash("O envio ultrapassou o limite permitido para esta solicitação. Reduza o tamanho dos arquivos e tente novamente.", "error")
+        referrer = request.referrer
+        if referrer and urlparse(referrer).netloc == request.host:
+            return redirect(referrer)
+        return redirect(url_for("main.dashboard"))
 
     return app

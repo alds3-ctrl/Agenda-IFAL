@@ -4,7 +4,7 @@ import io
 from flask import Blueprint, abort, flash, redirect, render_template, request, send_file, url_for
 from flask_login import current_user, login_required
 
-from ..models import Event, Notice, ScheduleItem, User
+from ..models import Attachment, Event, Notice, ScheduleItem, User
 
 
 main_bp = Blueprint("main", __name__)
@@ -110,6 +110,25 @@ def profile_photo(user_id):
         max_age=0,
     )
     response.headers["X-Content-Type-Options"] = "nosniff"
+    return response
+
+
+@main_bp.get("/anexos/<int:attachment_id>")
+@login_required
+def attachment_file(attachment_id):
+    attachment = Attachment.query.get_or_404(attachment_id)
+    download = request.args.get("download") == "1"
+    safe_inline_types = {"image/png", "image/jpeg", "image/webp", "application/pdf"}
+    as_attachment = download or attachment.mimetype not in safe_inline_types
+    response = send_file(
+        io.BytesIO(attachment.data),
+        mimetype=attachment.mimetype,
+        as_attachment=as_attachment,
+        download_name=attachment.original_filename,
+        max_age=0,
+    )
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["Cache-Control"] = "private, no-store"
     return response
 
 

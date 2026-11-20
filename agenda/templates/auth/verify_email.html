@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Verificar e-mail{% endblock %}
+{% block auth_content %}
+<div class="login-page">
+  <div class="login-decoration"><div class="login-orb orb-one"></div><div class="login-brand"><img class="brand-logo brand-logo-login" src="{{ url_for('static', filename='img/agenda-ifal-logo.png') }}" alt="Logo Agenda IFAL"><div><strong>Agenda <em>IFAL</em></strong><small>Organização acadêmica</small></div></div><div class="login-promo"><span class="eyebrow">CONFIRMAÇÃO DE IDENTIDADE</span><h1>Confira seu<br><span>e-mail.</span></h1><p>Enviamos uma mensagem com um código de seis dígitos para seu endereço institucional. O código expira em 10 minutos.</p></div><div class="login-footnote">Instituto Federal de Alagoas · Campus Viçosa</div></div>
+  <div class="login-panel"><div class="login-card auth-form-card"><div class="mobile-login-brand"><img class="brand-logo brand-logo-mobile" src="{{ url_for('static', filename='img/agenda-ifal-logo.png') }}" alt="Logo Agenda IFAL"><strong>Agenda <em>IFAL</em></strong></div><span class="eyebrow eyebrow-green">ETAPA 2 DE 3</span><h2>Verifique seu e-mail</h2><p>Digite o código enviado para <strong>{{ email }}</strong>.</p>
+    <form method="post" action="{{ url_for('auth.verify_email') }}" class="form-stack">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="email" value="{{ email }}">
+      <label for="code">Código de verificação</label><input id="code" name="code" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" minlength="6" placeholder="000000" required autofocus>
+      <button class="button button-primary button-full" type="submit">Confirmar código <span>→</span></button>
+    </form>
+    <form method="post" action="{{ url_for('auth.resend_code') }}" class="resend-form"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="email" value="{{ email }}"><button type="submit" class="text-button">Não recebeu? Enviar outro código</button></form>
+    <div class="auth-switch"><a href="{{ url_for('auth.register') }}">Voltar ao cadastro</a></div>
+  </div><div class="login-copyright">Agenda IFAL · Projeto acadêmico</div></div>
+</div>
+{% endblock %}

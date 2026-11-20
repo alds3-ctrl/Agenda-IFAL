@@ -1,0 +1,18 @@
+{% macro attachment_list(attachments) %}
+  {% if attachments %}
+  <div class="attachment-list">
+    <div class="attachment-title"><span aria-hidden="true">📎</span> Arquivos anexados</div>
+    {% for attachment in attachments %}
+    <div class="attachment-row">
+      <span class="attachment-file-icon" aria-hidden="true">{% if attachment.mimetype.startswith('image/') %}▧{% elif attachment.mimetype == 'application/pdf' %}PDF{% else %}DOC{% endif %}</span>
+      <span class="attachment-name" title="{{ attachment.original_filename }}">{{ attachment.original_filename }}</span>
+      <span class="attachment-size">{{ '%.0f'|format(attachment.file_size / 1024) }} KB</span>
+      <span class="attachment-actions">
+        {% if attachment.mimetype.startswith('image/') or attachment.mimetype == 'application/pdf' %}<a href="{{ url_for('main.attachment_file', attachment_id=attachment.id) }}" target="_blank" rel="noopener">Visualizar</a>{% else %}<a href="{{ url_for('main.attachment_file', attachment_id=attachment.id) }}">Abrir / baixar</a>{% endif %}
+        <a href="{{ url_for('main.attachment_file', attachment_id=attachment.id, download=1) }}">Baixar</a>
+      </span>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+{% endmacro %}

@@ -527,3 +527,40 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 :root[data-theme="dark"] .status-past { color: #a9b5bd; background: #263541; }
 :root[data-theme="dark"] .fixed-filter strong { color: var(--ink); }
 :root[data-theme="dark"] .login-card .check-line { color: #b5c3cc !important; }
+
+
+/* Anexos de agenda, cronogramas e avisos */
+.upload-field { padding: 14px; border: 1px dashed #b9d7ca; border-radius: 10px; background: #f7fbf8; }
+.upload-field input[type="file"] { min-height: 42px; padding: 8px; background: var(--paper); border: 1px solid var(--line); border-radius: 7px; }
+.upload-field small { display: block; color: var(--muted); font-size: 10px; line-height: 1.55; margin-top: 7px; }
+.existing-attachments { display: grid; gap: 8px; padding: 12px 14px; border-radius: 9px; background: var(--canvas); color: var(--ink); font-size: 11px; }
+.remove-attachment { display: flex !important; align-items: center; gap: 8px; margin: 0 !important; font-weight: 500 !important; }
+.remove-attachment input { width: 14px !important; min-height: 14px !important; accent-color: var(--green); }
+.attachment-list { margin-top: 12px; padding: 10px 11px; border: 1px solid var(--line); border-radius: 9px; background: var(--canvas); }
+.attachment-title { color: var(--muted); font-size: 10px; font-weight: 800; margin-bottom: 7px; }
+.attachment-row { display: flex; align-items: center; gap: 8px; min-width: 0; padding: 7px 0; border-top: 1px solid var(--line); font-size: 10px; }
+.attachment-row:first-of-type { border-top: 0; }
+.attachment-file-icon { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 27px; width: 27px; height: 27px; border-radius: 7px; color: var(--green); background: var(--green-soft); font-size: 10px; font-weight: 800; }
+.attachment-name { min-width: 0; flex: 1; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.attachment-size { color: var(--muted); white-space: nowrap; font-size: 9px; }
+.attachment-actions { display: flex; gap: 9px; white-space: nowrap; }
+.attachment-actions a { color: var(--green); font-weight: 800; }
+.attachment-actions a:hover { text-decoration: underline; }
+.auth-form-card { max-width: 410px; }
+.auth-form-card .form-stack { gap: 8px; }
+.auth-form-card .auth-help { color: var(--muted); font-size: 10px; line-height: 1.45; margin-top: -3px; }
+.auth-switch { margin-top: 19px; color: var(--muted); font-size: 11px; text-align: center; line-height: 1.65; }
+.auth-switch a, .text-button { color: var(--green); font-weight: 800; }
+.auth-switch a:hover, .text-button:hover { text-decoration: underline; }
+.resend-form { margin-top: 15px; text-align: center; }
+.text-button { border: 0; padding: 5px; background: transparent; font-size: 11px; cursor: pointer; }
+:root[data-theme="dark"] .upload-field { background: #142d25; border-color: #315b48; }
+:root[data-theme="dark"] .upload-field input[type="file"] { color: var(--ink); }
+:root[data-theme="dark"] .attachment-list { background: #10232e; }
+:root[data-theme="dark"] .existing-attachments { background: #10232e; }
+@media (max-width: 520px) {
+  .attachment-row { flex-wrap: wrap; }
+  .attachment-name { flex-basis: calc(100% - 45px); }
+  .attachment-size { margin-left: 35px; }
+  .attachment-actions { margin-left: auto; }
+}

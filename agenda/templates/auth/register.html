@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}Criar conta{% endblock %}
+{% block auth_content %}
+<div class="login-page">
+  <div class="login-decoration"><div class="login-orb orb-one"></div><div class="login-orb orb-two"></div><div class="login-brand"><img class="brand-logo brand-logo-login" src="{{ url_for('static', filename='img/agenda-ifal-logo.png') }}" alt="Logo Agenda IFAL"><div><strong>Agenda <em>IFAL</em></strong><small>Organização acadêmica</small></div></div><div class="login-promo"><span class="eyebrow">CADASTRO ESTUDANTIL</span><h1>Sua rotina.<br><span>Mais organizada.</span></h1><p>Crie sua conta usando o e-mail institucional do IFAL. Após confirmar o código enviado para sua caixa de entrada, você poderá definir sua senha e acessar a plataforma.</p><div class="promo-points"><span>✓ Cadastro independente</span><span>✓ E-mail institucional verificado</span><span>✓ Acesso aos conteúdos da sua turma</span></div></div><div class="login-footnote">Instituto Federal de Alagoas · Campus Viçosa</div></div>
+  <div class="login-panel"><div class="login-card auth-form-card"><div class="mobile-login-brand"><img class="brand-logo brand-logo-mobile" src="{{ url_for('static', filename='img/agenda-ifal-logo.png') }}" alt="Logo Agenda IFAL"><strong>Agenda <em>IFAL</em></strong></div><span class="eyebrow eyebrow-green">PRIMEIRO ACESSO</span><h2>Crie sua conta</h2><p>Informe seus dados para receber um código de verificação.</p>
+    <form method="post" class="form-stack">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <label for="name">Nome completo *</label><input id="name" name="name" maxlength="120" value="{{ request.form.get('name', '') }}" autocomplete="name" placeholder="Seu nome completo" required>
+      <label for="email">E-mail institucional *</label><input id="email" name="email" type="email" value="{{ request.form.get('email', '') }}" autocomplete="email" placeholder="seu.nome@aluno.ifal.edu.br" required pattern="^[^@\s]+@aluno\.ifal\.edu\.br$">
+      <small class="auth-help">Somente endereços terminados em <strong>@aluno.ifal.edu.br</strong> são aceitos.</small>
+      <label for="class_name">Turma <span class="muted">(opcional)</span></label><input id="class_name" name="class_name" maxlength="80" value="{{ request.form.get('class_name', '') }}" placeholder="Ex.: 3º ano - Informática">
+      <button class="button button-primary button-full" type="submit">Enviar código de verificação <span>→</span></button>
+    </form>
+    <div class="auth-switch">Já possui uma conta? <a href="{{ url_for('auth.login') }}">Entrar</a></div>
+  </div><div class="login-copyright">Agenda IFAL · Projeto acadêmico</div></div>
+</div>
+{% endblock %}
