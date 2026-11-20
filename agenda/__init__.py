@@ -45,6 +45,10 @@ def create_app(test_config=None):
     def inject_globals():
         from datetime import date
         today = date.today()
+        from flask_login import current_user
+        from .models import Notification
+        unread_count = Notification.query.filter_by(user_id=current_user.id, read_at=None).count() if current_user.is_authenticated else 0
+        latest_notifications = Notification.query.filter_by(user_id=current_user.id).order_by(Notification.created_at.desc()).limit(3).all() if current_user.is_authenticated else []
         months = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"]
         weekdays = ["segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado", "domingo"]
         return {
@@ -54,6 +58,9 @@ def create_app(test_config=None):
             "today_month_short": months[today.month - 1][:3].upper(),
             "today_label": f"{weekdays[today.weekday()]}, {today.day} de {months[today.month - 1]} de {today.year}",
             "today_iso": today.isoformat(),
+            "class_options": ["1° ADM", "2° ADM", "3° ADM", "1° INFO", "2° INFO", "3° INFO", "1° Módulo", "2° Módulo", "3° Módulo"],
+            "unread_notifications_count": unread_count,
+            "latest_notifications": latest_notifications,
         }
 
     with app.app_context():
@@ -65,12 +72,22 @@ def create_app(test_config=None):
         additions = {
             "profile_photo": binary_type,
             "profile_photo_mimetype": "VARCHAR(80)",
+            "matricula": "VARCHAR(10)",
         }
         missing = [(name, sql_type) for name, sql_type in additions.items() if name not in user_columns]
         if missing:
             with db.engine.begin() as connection:
                 for name, sql_type in missing:
                     connection.execute(text(f"ALTER TABLE users ADD COLUMN {name} {sql_type}"))
+        verification_columns = {column["name"] for column in inspect(db.engine).get_columns("email_verifications")}
+        if "matricula" not in verification_columns:
+            with db.engine.begin() as connection:
+                connection.execute(text("ALTER TABLE email_verifications ADD COLUMN matricula VARCHAR(10)"))
+        with db.engine.begin() as connection:
+            connection.execute(text("CREATE UNIQUE INDEX IF NOT EXISTS ix_users_matricula_unique ON users (matricula)"))
+            connection.execute(text("UPDATE users SET class_name = '3° INFO' WHERE class_name = '3º ano (exemplo)'"))
+            connection.execute(text("UPDATE schedule_items SET class_name = '3° INFO' WHERE class_name = '3º ano (exemplo)'"))
+            connection.execute(text("UPDATE users SET matricula = '2024309536' WHERE email = 'aluno@agendaifal.local' AND matricula IS NULL AND NOT EXISTS (SELECT 1 FROM users WHERE matricula = '2024309536')"))
         from .seed import seed_demo_data
         seed_demo_data()
 

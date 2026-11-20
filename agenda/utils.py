@@ -33,6 +33,16 @@ def flash_form_error(message):
 
 
 STUDENT_EMAIL_DOMAIN = "@aluno.ifal.edu.br"
+CLASS_OPTIONS = ["1° ADM", "2° ADM", "3° ADM", "1° INFO", "2° INFO", "3° INFO", "1° Módulo", "2° Módulo", "3° Módulo"]
+
+def valid_matricula(value):
+    return bool(re.fullmatch(r"[0-9]{10}", value or ""))
 
 def is_student_email(email):
     return bool(re.fullmatch(r"[^@\s]+@aluno\.ifal\.edu\.br", email or "", flags=re.IGNORECASE))
+
+
+def valid_password(value):
+    """Senha com pelo menos 8 caracteres, um número e um caractere especial."""
+    value = value or ""
+    return len(value) >= 8 and bool(re.search(r"[0-9]", value)) and bool(re.search(r"[^A-Za-z0-9\s]", value))

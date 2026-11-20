@@ -12,6 +12,7 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), nullable=False)
     email = db.Column(db.String(160), unique=True, nullable=False, index=True)
+    matricula = db.Column(db.String(10), unique=True, nullable=True, index=True)
     password_hash = db.Column(db.String(255), nullable=False)
     role = db.Column(db.String(20), nullable=False, default="student")
     class_name = db.Column(db.String(80), nullable=True)
@@ -122,6 +123,7 @@ class EmailVerification(db.Model):
     email = db.Column(db.String(160), unique=True, nullable=False, index=True)
     name = db.Column(db.String(120), nullable=False)
     class_name = db.Column(db.String(80), nullable=True)
+    matricula = db.Column(db.String(10), nullable=True, index=True)
     code_hash = db.Column(db.String(64), nullable=False)
     expires_at = db.Column(db.DateTime, nullable=False)
     attempts = db.Column(db.Integer, nullable=False, default=0)
@@ -131,3 +133,127 @@ class EmailVerification(db.Model):
     setup_token_hash = db.Column(db.String(64), nullable=True, index=True)
     setup_expires_at = db.Column(db.DateTime, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False, index=True)
+
+
+class EmailChangeVerification(db.Model):
+    __tablename__ = "email_change_verifications"
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"), unique=True, nullable=False)
+    new_email = db.Column(db.String(160), nullable=False, unique=True)
+    code_hash = db.Column(db.String(64), nullable=False)
+    attempts = db.Column(db.Integer, nullable=False, default=0)
+    expires_at = db.Column(db.DateTime, nullable=False)
+    last_sent_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    user = db.relationship("User")
+
+
+class PasswordReset(db.Model):
+    """Verificação temporária por e-mail para redefinição de senha."""
+    __tablename__ = "password_resets"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"), unique=True, nullable=False, index=True)
+    code_hash = db.Column(db.String(64), nullable=False)
+    expires_at = db.Column(db.DateTime, nullable=False)
+    attempts = db.Column(db.Integer, nullable=False, default=0)
+    last_sent_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    reset_token_hash = db.Column(db.String(64), nullable=True, index=True)
+    reset_token_expires_at = db.Column(db.DateTime, nullable=True)
+    pending_password_hash = db.Column(db.String(255), nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    user = db.relationship("User")
+
+
+class PersonalTask(db.Model):
+    __tablename__ = "personal_tasks"
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    title = db.Column(db.String(160), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    due_date = db.Column(db.Date, nullable=True, index=True)
+    priority = db.Column(db.String(12), nullable=False, default="Média")
+    completed = db.Column(db.Boolean, nullable=False, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    user = db.relationship("User")
+
+
+class Notification(db.Model):
+    __tablename__ = "notifications"
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    title = db.Column(db.String(160), nullable=False)
+    message = db.Column(db.String(400), nullable=False)
+    link = db.Column(db.String(255), nullable=True)
+    fingerprint = db.Column(db.String(190), nullable=True, unique=True)
+    read_at = db.Column(db.DateTime, nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False, index=True)
+    user = db.relationship("User")
+
+
+class TimetableEntry(db.Model):
+    __tablename__ = "timetable_entries"
+    id = db.Column(db.Integer, primary_key=True)
+    class_name = db.Column(db.String(80), nullable=False, index=True)
+    weekday = db.Column(db.Integer, nullable=False)  # 0=segunda
+    start_time = db.Column(db.String(5), nullable=False)
+    end_time = db.Column(db.String(5), nullable=False)
+    subject = db.Column(db.String(100), nullable=False)
+    teacher = db.Column(db.String(120), nullable=True)
+    room = db.Column(db.String(80), nullable=True)
+
+
+class Material(db.Model):
+    __tablename__ = "materials"
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(160), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    subject = db.Column(db.String(100), nullable=True)
+    class_name = db.Column(db.String(80), nullable=True, index=True)
+    filename = db.Column(db.String(255), nullable=False)
+    mimetype = db.Column(db.String(100), nullable=False)
+    data = db.Column(db.LargeBinary, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False, index=True)
+
+
+class Favorite(db.Model):
+    __tablename__ = "favorites"
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    entity_type = db.Column(db.String(30), nullable=False)
+    entity_id = db.Column(db.Integer, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    __table_args__ = (db.UniqueConstraint("user_id", "entity_type", "entity_id", name="uq_user_favorite"),)
+    user = db.relationship("User")
+
+
+class AcademicRequest(db.Model):
+    __tablename__ = "academic_requests"
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    subject = db.Column(db.String(160), nullable=False)
+    message = db.Column(db.Text, nullable=False)
+    status = db.Column(db.String(20), nullable=False, default="Aberta")
+    admin_response = db.Column(db.Text, nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False, index=True)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    user = db.relationship("User")
+
+
+class AcademicPeriod(db.Model):
+    __tablename__ = "academic_periods"
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(160), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    start_date = db.Column(db.Date, nullable=False, index=True)
+    end_date = db.Column(db.Date, nullable=False, index=True)
+    kind = db.Column(db.String(40), nullable=False, default="Período letivo")
+
+
+class AuditLog(db.Model):
+    __tablename__ = "audit_logs"
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True)
+    action = db.Column(db.String(100), nullable=False)
+    details = db.Column(db.String(400), nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False, index=True)
+    user = db.relationship("User")

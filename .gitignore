@@ -1,32 +1,22 @@
-.venv/
-__pycache__/
-*.py[cod]
-.env
-.env.*
-!.env.example
-instance/*.db
-instance/*.sqlite3
-.pytest_cache/
-.DS_Store
-# Bancos SQLite locais (inclusive cópias fora de instance/)
-*.db
-*.sqlite
-*.sqlite3
-
-# Arquivos com informações sensíveis
+# Configurações e credenciais locais
 .env
 .env.*
 !.env.example
 
-# Bancos de dados locais
+# Bancos locais e dados de execução
 *.db
 *.sqlite
 *.sqlite3
+instance/
 
-# Ambiente virtual
+# Ambiente Python e cache
 .venv/
 venv/
-
-# Cache Python
 __pycache__/
 *.py[cod]
+.pytest_cache/
+
+# Sistema operacional / IDE
+.DS_Store
+Thumbs.db
+.vscode/

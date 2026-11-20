@@ -1,40 +1,11 @@
 {% extends 'base.html' %}
-{% block title %}Minha conta{% endblock %}
-{% block breadcrumb %}Minha conta{% endblock %}
+{% block title %}Minha conta{% endblock %}{% block breadcrumb %}Minha conta{% endblock %}
 {% block content %}
-<div class="page-heading"><span class="eyebrow eyebrow-green">SEU PERFIL</span><h1>Minha conta</h1><p>Atualize suas informações de acesso.</p></div>
-<div class="content-card account-card">
-  <div class="account-summary account-summary-modern">
-    <div class="profile-photo-editor">
-      <div class="profile-photo-preview" id="profilePhotoPreview">
-        {% if current_user.profile_photo %}
-          <img src="{{ url_for('main.profile_photo', user_id=current_user.id) }}" alt="Foto de perfil atual">
-        {% else %}
-          <span>{{ current_user.name[:1]|upper }}</span>
-        {% endif %}
-      </div>
-      <div class="profile-photo-copy">
-        <strong>Foto de perfil</strong>
-        <span>Escolha uma imagem para personalizar sua conta.</span>
-        <label class="button button-ghost photo-select-button" for="profile_photo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m-4 4 4-4 4 4M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg> Escolher foto</label>
-        <small class="field-help">JPG, PNG ou WEBP · até 3 MB</small>
-      </div>
-    </div>
-    <div class="account-identity"><h2>{{ current_user.name }}</h2><p>{{ current_user.email }}</p><span class="soft-tag">{{ 'Administrador' if current_user.is_admin else 'Estudante' }}</span></div>
-  </div>
-  <form method="post" enctype="multipart/form-data" class="form-grid account-form">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <input class="visually-hidden-file" type="file" id="profile_photo" name="profile_photo" accept="image/png,image/jpeg,image/webp">
-    <div class="field-full"><label for="name">Nome completo</label><input id="name" name="name" value="{{ current_user.name }}" required maxlength="120"></div>
-    <div class="field-full"><label for="email">E-mail</label><input id="email" value="{{ current_user.email }}" disabled><small class="field-help">O e-mail é gerenciado pelo administrador.</small></div>
-    {% if current_user.class_name %}<div class="field-full"><label for="class_name">Turma vinculada</label><input id="class_name" value="{{ current_user.class_name }}" disabled></div>{% endif %}
-    <div class="field-full form-section-title">Alterar senha <span>Preencha somente se desejar trocar a senha.</span></div>
-    <div><label for="current_password">Senha atual</label><input id="current_password" name="current_password" type="password" autocomplete="current-password"></div>
-    <div><label for="new_password">Nova senha</label><input id="new_password" name="new_password" type="password" minlength="8" autocomplete="new-password"><small class="field-help">Mínimo de 8 caracteres.</small></div>
-    <div class="field-full form-actions account-actions">
-      {% if current_user.profile_photo %}<button class="button button-danger-ghost" type="submit" name="remove_photo" value="1" formnovalidate onclick="return confirm('Remover sua foto de perfil?')">Remover foto</button>{% endif %}
-      <button class="button button-primary" type="submit">Salvar alterações</button>
-    </div>
-  </form>
-</div>
-{% endblock %}
+<div class="page-heading"><span class="eyebrow eyebrow-green">SEU PERFIL</span><h1>Minha conta</h1><p>Gerencie seus dados pessoais e informações de acesso.</p></div>
+<div class="content-card account-card"><div class="account-summary account-summary-modern"><div class="profile-photo-editor"><div class="profile-photo-preview" id="profilePhotoPreview">{% if current_user.profile_photo %}<img src="{{ url_for('main.profile_photo', user_id=current_user.id) }}" alt="Foto atual">{% else %}<span>{{ current_user.name[:1]|upper }}</span>{% endif %}</div><div class="profile-photo-copy"><strong>Foto de perfil</strong><span>Personalize sua conta.</span><label class="button button-ghost photo-select-button" for="profile_photo">Escolher foto</label><small class="field-help">JPG, PNG ou WEBP · até 3 MB</small></div></div><div class="account-identity"><h2>{{ current_user.name }}</h2><p>{{ current_user.email }}</p><span class="soft-tag">{{ 'Administrador' if current_user.is_admin else 'Estudante' }}</span></div></div>
+<form method="post" enctype="multipart/form-data" class="form-grid account-form"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input class="visually-hidden-file" type="file" id="profile_photo" name="profile_photo" accept="image/png,image/jpeg,image/webp">
+<div class="field-full"><label for="name">Nome completo</label><input id="name" name="name" value="{{ current_user.name }}" required maxlength="120"></div>
+<div class="field-full"><label for="email">E-mail</label><input id="email" name="email" type="email" value="{{ current_user.email }}" required>{% if not current_user.is_admin %}<small class="field-help">O novo endereço precisa terminar em @aluno.ifal.edu.br e será confirmado por código.</small>{% endif %}</div>
+{% if not current_user.is_admin %}<div><label for="matricula">Matrícula</label><input id="matricula" name="matricula" type="text" inputmode="numeric" pattern="[0-9]{10}" minlength="10" maxlength="10" value="{{ current_user.matricula or '' }}" required></div><div><label for="class_name">Turma</label><select id="class_name" name="class_name" required>{% for item in class_options %}<option value="{{ item }}" {% if current_user.class_name == item %}selected{% endif %}>{{ item }}</option>{% endfor %}</select></div>{% endif %}
+<div class="field-full form-section-title">Alterar senha <span>Use sua senha atual ou confirme a alteração por e-mail.</span></div><div class="field-full"><label for="current_password">Senha atual</label><input id="current_password" name="current_password" type="password" autocomplete="current-password"><small class="field-help">Se não lembrar a senha atual, deixe este campo vazio. Enviaremos um código ao e-mail cadastrado para confirmar a troca.</small></div><div><label for="new_password">Nova senha</label><input id="new_password" name="new_password" type="password" minlength="8" pattern="(?=.*[0-9])(?=.*[^A-Za-z0-9\s]).{8,}" autocomplete="new-password"><small class="field-help">Mínimo de 8 caracteres, com pelo menos 1 número e 1 caractere especial.</small></div>
+<div class="field-full form-actions account-actions">{% if current_user.profile_photo %}<button class="button button-danger-ghost" type="submit" name="remove_photo" value="1" formnovalidate onclick="return confirm('Remover sua foto de perfil?')">Remover foto</button>{% endif %}<button class="button button-primary" type="submit">Salvar alterações</button></div></form></div>{% endblock %}

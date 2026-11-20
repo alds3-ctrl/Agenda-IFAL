@@ -15,7 +15,8 @@ def seed_demo_data():
         name="Estudante de demonstração",
         email="aluno@agendaifal.local",
         role="student",
-        class_name="3º ano (exemplo)",
+        class_name="3° INFO",
+        matricula="2024309536",
     )
     student.set_password("Aluno123!")
     db.session.add_all([admin, student])
@@ -50,7 +51,7 @@ def seed_demo_data():
             author=admin,
         ),
         ScheduleItem(
-            class_name="3º ano (exemplo)",
+            class_name="3° INFO",
             term="1º Bimestre",
             subject="Exemplo de disciplina",
             title="Atividade demonstrativa",

@@ -9,7 +9,8 @@
       <label for="name">Nome completo *</label><input id="name" name="name" maxlength="120" value="{{ request.form.get('name', '') }}" autocomplete="name" placeholder="Seu nome completo" required>
       <label for="email">E-mail institucional *</label><input id="email" name="email" type="email" value="{{ request.form.get('email', '') }}" autocomplete="email" placeholder="seu.nome@aluno.ifal.edu.br" required pattern="^[^@\s]+@aluno\.ifal\.edu\.br$">
       <small class="auth-help">Somente endereços terminados em <strong>@aluno.ifal.edu.br</strong> são aceitos.</small>
-      <label for="class_name">Turma <span class="muted">(opcional)</span></label><input id="class_name" name="class_name" maxlength="80" value="{{ request.form.get('class_name', '') }}" placeholder="Ex.: 3º ano - Informática">
+      <label for="matricula">Matrícula *</label><input id="matricula" name="matricula" type="text" inputmode="numeric" maxlength="10" minlength="10" pattern="[0-9]{10}" value="{{ request.form.get('matricula', '') }}" placeholder="2024309536" required><small class="auth-help">Informe os 10 números da sua matrícula, sem pontos ou traços.</small>
+      <label for="class_name">Turma *</label><select id="class_name" name="class_name" required><option value="">Selecione sua turma</option>{% for item in class_options %}<option value="{{ item }}" {% if request.form.get('class_name') == item %}selected{% endif %}>{{ item }}</option>{% endfor %}</select>
       <button class="button button-primary button-full" type="submit">Enviar código de verificação <span>→</span></button>
     </form>
     <div class="auth-switch">Já possui uma conta? <a href="{{ url_for('auth.login') }}">Entrar</a></div>
